@@ -9,12 +9,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [windows-latest, ubuntu-latest]
         sourcemod-version: [master] # (1.11)
         metamod-version: [master] # (1.11)
         include:
+          - os: windows-latest
+            target-archs: x86,x86_64
           - os: ubuntu-latest
-            target-archs: x86_64
 
     steps:
       - name: Install Linux packages
