@@ -1,0 +1,63 @@
+name: CI_test
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        sourcemod-version: [master]
+        include:
+          - os: ubuntu-latest
+            target-archs: x86_64
+
+    steps:
+      - name: Install Linux packages
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install -yq --no-install-recommends g++-multilib lib32z1-dev
+      - name: Set up Python
+        uses: actions/setup-python@v2
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: extension
+
+      - name: Checkout SourceMod
+        uses: actions/checkout@v2
+        with:
+          repository: alliedmodders/sourcemod
+          ref: ${{ matrix.sourcemod-version }}
+          path: sourcemod
+          submodules: recursive
+
+      - name: Checkout AMBuild
+        uses: actions/checkout@v2
+        with:
+          repository: alliedmodders/ambuild
+          path: ambuild
+
+      - name: Install AMBuild
+        uses: BSFishy/pip-action@v1
+        with:
+          packages: ./ambuild
+
+      - name: Build
+        working-directory: extension
+        shell: bash
+        run: |
+          mkdir build && cd build
+          python ../configure.py --enable-debug
+          ambuild
+          
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ runner.os }}
+          path: extension/build/package
