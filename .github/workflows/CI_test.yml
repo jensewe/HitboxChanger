@@ -10,7 +10,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        sourcemod-version: [master]
+        sourcemod-version: [master] # (1.11)
+        metamod-version: [master] # (1.11)
         include:
           - os: ubuntu-latest
             target-archs: x86_64
@@ -28,6 +29,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: extension
+          
+      - name: Checkout Metamod
+        uses: actions/checkout@v2
+        with:
+          repository: alliedmodders/metamod-source
+          ref: ${{ matrix.metamod-version }}
+          path: 'metamod-source'
 
       - name: Checkout SourceMod
         uses: actions/checkout@v2
