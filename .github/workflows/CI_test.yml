@@ -72,6 +72,9 @@ jobs:
       - name: Build
         working-directory: extension
         shell: bash
+        env:
+          AMBUILD_VCVARS_X86: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat
+          AMBUILD_VCVARS_X86_64: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat
         run: |
           mkdir build && cd build
           python ../configure.py --enable-debug
