@@ -63,6 +63,11 @@ jobs:
         with:
           CC: clang
           CXX: clang++
+          
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows'
+        with:
+          arch: x86
 
       - name: Build
         working-directory: extension
