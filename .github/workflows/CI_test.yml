@@ -55,6 +55,13 @@ jobs:
         uses: BSFishy/pip-action@v1
         with:
           packages: ./ambuild
+          
+      - name: Use CC=clang CXX=clang++
+        if: runner.os == 'Linux'
+        uses: allenevans/set-env@v2.0.0
+        with:
+          CC: clang
+          CXX: clang++
 
       - name: Build
         working-directory: extension
