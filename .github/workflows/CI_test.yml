@@ -66,10 +66,20 @@ jobs:
 
       - name: Build
         working-directory: extension
+        if: runner.os == 'Linux'
         shell: bash
         run: |
           mkdir build && cd build
           python ../configure.py --enable-debug
+          ambuild
+          
+      - name: Build
+        working-directory: extension
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          mkdir build && cd build
+          python ../configure.py
           ambuild
           
       - name: Upload artifact
