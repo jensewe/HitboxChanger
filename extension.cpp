@@ -322,8 +322,6 @@ bool HitboxChanger::SDK_OnLoad(char *error, size_t maxlen, bool late)
 
 bool HitboxChanger::SDK_OnMetamodLoad(ISmmAPI *ismm, char *error, size_t maxlen, bool late)
 {
-	GET_V_IFACE_CURRENT(GetFileSystemFactory, g_pModelinfo, IVModelInfo, VMODELINFO_SERVER_INTERFACE_VERSION);
-	//TODO: Try to see if this works on windows?
-	//GET_V_IFACE_CURRENT(GetEngineFactory, g_pDebugOverlay, IVDebugOverlay, VDEBUG_OVERLAY_INTERFACE_VERSION);
+	GET_V_IFACE_CURRENT(GetEngineFactory, g_pModelinfo, IVModelInfo, VMODELINFO_SERVER_INTERFACE_VERSION);
 	return true;
 }
