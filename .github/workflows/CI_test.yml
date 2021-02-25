@@ -53,11 +53,6 @@ jobs:
         with:
           packages: ./ambuild
           
-      - uses: ilammy/msvc-dev-cmd@v1
-        if: runner.os == 'Windows'
-        with:
-          arch: x86
-
       - name: Build
         working-directory: extension
         if: runner.os == 'Linux'
