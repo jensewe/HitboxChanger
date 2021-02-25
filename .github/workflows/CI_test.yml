@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
+        os: [windows-latest, ubuntu-latest]
         sourcemod-version: [master] # (1.11)
         metamod-version: [master] # (1.11)
 
