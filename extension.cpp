@@ -1,49 +1,9 @@
-/**
- * vim: set ts=4 :
- * =============================================================================
- * SourceMod Sample Extension
- * Copyright (C) 2004-2008 AlliedModders LLC.  All rights reserved.
- * =============================================================================
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 3.0, as published by the
- * Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * As a special exception, AlliedModders LLC gives you permission to link the
- * code of this program (as well as its derivative works) to "Half-Life 2," the
- * "Source Engine," the "SourcePawn JIT," and any Game MODs that run on software
- * by the Valve Corporation.  You must obey the GNU General Public License in
- * all respects for all other code used.  Additionally, AlliedModders LLC grants
- * this exception to all derivative works.  AlliedModders LLC defines further
- * exceptions, found in LICENSE.txt (as of this writing, version JULY-31-2007),
- * or <http://www.sourcemod.net/license.php>.
- *
- * Version: $Id$
- */
-
 #include "extension.h"
 #include <studio.h>
 #include <ivmodelinfo.h>
-//#include <ivdebugoverlay.h> directx weirdchamp
-//#include <bone_setup.h>
-//#include <bone_utils.cpp> fuck bones
-
-/**
- * @file extension.cpp
- * @brief Implement extension code here.
- */
 
 HitboxChanger	g_HitboxChanger;		/**< Global singleton for extension's main interface */
 IVModelInfo		*g_pModelinfo = NULL;
-//IVDebugOverlay	*g_pDebugOverlay = NULL;
 
 SMEXT_LINK(&g_HitboxChanger);
 
@@ -341,144 +301,6 @@ cell_t FindValidBones(IPluginContext *pContext, const cell_t *params)
 	return 1;
 }
 
-/* maybe this shit will work on windows but idk
-static Vector	hullcolor[8] = 
-{
-	Vector( 1.0, 1.0, 1.0 ),
-	Vector( 1.0, 0.5, 0.5 ),
-	Vector( 0.5, 1.0, 0.5 ),
-	Vector( 1.0, 1.0, 0.5 ),
-	Vector( 0.5, 0.5, 1.0 ),
-	Vector( 1.0, 0.5, 1.0 ),
-	Vector( 0.5, 1.0, 1.0 ),
-	Vector( 1.0, 1.0, 1.0 )
-};
-
-
-cell_t DrawServerHitboxes(IPluginContext *pContext, const cell_t *params)
-{	
-	cell_t modelIndex = params[1];
-	cell_t duration = params[2];
-	
-	cell_t *origin;
-	Vector pOrigin;
-	pContext->LocalToPhysAddr(params[3], &origin);
-	pOrigin.x = sp_ctof(origin[0]);
-	pOrigin.y = sp_ctof(origin[1]);
-	pOrigin.z = sp_ctof(origin[2]);
-	
-	cell_t *oAngles;
-	QAngle pAngles;
-	pContext->LocalToPhysAddr(params[4], &oAngles);
-	pAngles.x = sp_ctof(oAngles[0]);
-	pAngles.y = sp_ctof(oAngles[1]);
-	pAngles.z = sp_ctof(oAngles[2]);
-	
-	const model_t *test = g_pModelinfo->GetModel(modelIndex);
-	studiohdr_t *mdl = g_pModelinfo->GetStudiomodel(test);
-	mstudiohitboxset_t *hitboxset = mdl->pHitboxSet(0);
-	
-	if (hitboxset)
-	{
-		Vector position;
-		QAngle angles;
-
-		int r = 0;
-		int g = 0;
-		int b = 255;
-
-		for ( int i = 0; i < hitboxset->numhitboxes; i++ )
-		{
-			mstudiobbox_t *pbox = hitboxset->pHitbox( i );
-			
-			int j = (pbox->group % 8);
-			
-			r = ( int ) ( 255.0f * hullcolor[j][0] );
-			g = ( int ) ( 255.0f * hullcolor[j][1] );
-			b = ( int ) ( 255.0f * hullcolor[j][2] );
-
-			if ( pbox->flCapsuleRadius > 0 )
-			{
-				matrix3x4_t temp;
-				//GetHitboxBoneTransform( pbox->bone, pbox->angOffsetOrientation, temp );
-				{
-					matrix3x4_t bonetoworld;
-					//GetBoneTransform( iBone, bonetoworld );
-					{
-						Vector bonePos = mdl->pBone(pbox->bone)->pos;
-						Quaternion boneAngle = mdl->pBone(pbox->bone)->quat;
-						matrix3x4_t bPos;
-						//bPos.InitFromQuaternion(boneAngle, bonePos);
-						QuaternionMatrix( boneAngle, bonePos, bPos );
-						
-						matrix3x4_t entPos;
-						//entPos.InitFromQAngles(pAngles, pOrigin);
-						AngleMatrix( pAngles, pOrigin, entPos );
-						{
-							bPos[ 0 ][ 0 ] += entPos[ 0 ][ 0 ]; bPos[ 0 ][ 1 ] += entPos[ 0 ][ 1 ]; bPos[ 0 ][ 2 ] += entPos[ 0 ][ 2 ]; bPos[ 0 ][ 3 ] += entPos[ 0 ][ 3 ];
-							bPos[ 1 ][ 0 ] += entPos[ 1 ][ 0 ]; bPos[ 1 ][ 1 ] += entPos[ 1 ][ 1 ]; bPos[ 1 ][ 2 ] += entPos[ 1 ][ 2 ]; bPos[ 1 ][ 3 ] += entPos[ 1 ][ 3 ];
-							bPos[ 2 ][ 0 ] += entPos[ 2 ][ 0 ]; bPos[ 2 ][ 1 ] += entPos[ 2 ][ 1 ]; bPos[ 2 ][ 2 ] += entPos[ 2 ][ 2 ]; bPos[ 2 ][ 3 ] += entPos[ 2 ][ 3 ];
-						}
-						// FIXME
-						MatrixCopy( bPos, bonetoworld );
-					}
-					matrix3x4_t temp2;
-					AngleMatrix( pbox->angOffsetOrientation, temp2);
-					MatrixMultiply( bonetoworld, temp2, temp );
-				}
-
-				Vector vecCapsuleCenters[ 2 ];
-				VectorTransform( pbox->bbmin, temp, vecCapsuleCenters[0] );
-				VectorTransform( pbox->bbmax, temp, vecCapsuleCenters[1] );
-				
-				//NDebugOverlay::Capsule( vecCapsuleCenters[0], vecCapsuleCenters[1], pbox->flCapsuleRadius, r, g, b, 255, duration );
-				g_pDebugOverlay->AddCapsuleOverlay( vecCapsuleCenters[0], vecCapsuleCenters[1], pbox->flCapsuleRadius, r, g, b, 255, duration );
-			}
-			else
-			{
-				//GetHitboxBonePosition( pbox->bone, position, angles, pbox->angOffsetOrientation );
-				{
-					matrix3x4_t bonetoworld;
-					//GetBoneTransform( iBone, bonetoworld );
-					{
-						Vector bonePos = mdl->pBone(pbox->bone)->pos;
-						Quaternion boneAngle = mdl->pBone(pbox->bone)->quat;
-						matrix3x4_t bPos;
-						//bPos.InitFromQuaternion(boneAngle, bonePos);
-						QuaternionMatrix( boneAngle, bonePos, bPos );
-						
-						matrix3x4_t entPos;
-						//entPos.InitFromQAngles(pAngles, pOrigin);
-						AngleMatrix( pAngles, pOrigin, entPos );
-						{
-							bPos[ 0 ][ 0 ] += entPos[ 0 ][ 0 ]; bPos[ 0 ][ 1 ] += entPos[ 0 ][ 1 ]; bPos[ 0 ][ 2 ] += entPos[ 0 ][ 2 ]; bPos[ 0 ][ 3 ] += entPos[ 0 ][ 3 ];
-							bPos[ 1 ][ 0 ] += entPos[ 1 ][ 0 ]; bPos[ 1 ][ 1 ] += entPos[ 1 ][ 1 ]; bPos[ 1 ][ 2 ] += entPos[ 1 ][ 2 ]; bPos[ 1 ][ 3 ] += entPos[ 1 ][ 3 ];
-							bPos[ 2 ][ 0 ] += entPos[ 2 ][ 0 ]; bPos[ 2 ][ 1 ] += entPos[ 2 ][ 1 ]; bPos[ 2 ][ 2 ] += entPos[ 2 ][ 2 ]; bPos[ 2 ][ 3 ] += entPos[ 2 ][ 3 ];
-						}
-						// FIXME
-						MatrixCopy( bPos, bonetoworld );
-					}
-					
-					matrix3x4_t temp;
-					AngleMatrix( pbox->angOffsetOrientation, temp);
-					MatrixMultiply( bonetoworld, temp, temp );
-
-					MatrixAngles( temp, angles, position );
-				}
-				//NDebugOverlay::BoxAngles( position, pbox->bbmin*GetModelHierarchyScale(), pbox->bbmax*GetModelHierarchyScale(), angles, r, g, b, 0 ,duration );
-				g_pDebugOverlay->AddBoxOverlay(position, pbox->bbmin, pbox->bbmax, angles, r, g, b, 0, duration);
-			}
-		}
-	}
-	else
-	{
-		rootconsole->ConsolePrint("[HitboxChanger]: !!!Get Hitbox Failure!!! Bad HitBoxSet");
-		return 0;
-	}
-	return 1;
-}
-*/
-
 const sp_nativeinfo_t MyNatives[] = 
 {
 	{"HitboxInfo",		HitboxInfo},
@@ -489,7 +311,6 @@ const sp_nativeinfo_t MyNatives[] =
 	{"GetNumHitboxes",	GetNumHitboxes},
 	{"FindBone",		FindBone},
 	{"FindValidBones",	FindValidBones},
-	//{"DrawServerHitboxes",	DrawServerHitboxes},
 	{NULL,				NULL},
 };
 
@@ -506,11 +327,3 @@ bool HitboxChanger::SDK_OnMetamodLoad(ISmmAPI *ismm, char *error, size_t maxlen,
 	//GET_V_IFACE_CURRENT(GetEngineFactory, g_pDebugOverlay, IVDebugOverlay, VDEBUG_OVERLAY_INTERFACE_VERSION);
 	return true;
 }
-
-
-
-
-
-
-
-
