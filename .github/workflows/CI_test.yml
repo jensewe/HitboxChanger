@@ -27,6 +27,12 @@ jobs:
         with:
           path: extension
           
+      - name: Move modified CSGO SDK
+        working-directory: extension
+        shell: bash
+        run: |
+          mv hl2sdk-csgo-hitboxchanger -v ./..
+          
       - name: Checkout Metamod
         uses: actions/checkout@v2
         with:
