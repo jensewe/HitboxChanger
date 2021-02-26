@@ -144,8 +144,8 @@ enum struct Hitbox {
 
 public Extension __ext_hitboxchanger = 
 {
-	name = "HitboxChanger",
-	file = "HitboxChanger.ext",
+	name = "hitboxchanger",
+	file = "hitboxchanger.ext",
 #if defined AUTOLOAD_EXTENSIONS
 	autoload = 1,
 #else
