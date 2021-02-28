@@ -12,7 +12,11 @@ jobs:
         os: [windows-latest, ubuntu-latest]
         sourcemod-version: [master] # (1.11)
         metamod-version: [master] # (1.11)
-        sdks: [csgo, l4d2]
+        include:
+          - os: ubuntu-latest
+            sdks: csgo, l4d2
+          - os: windows-latest
+            sdks: csgo, l4d2
 
     steps:
       - name: Install Linux packages
