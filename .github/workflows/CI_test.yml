@@ -46,7 +46,7 @@ jobs:
       - name: Checkout SDKs
         uses: actions/checkout@v2
         with:
-          repository: alliedmodders/sourcemod
+          repository: alliedmodders/hl2sdk
           ref: ${{ matrix.sdks }}
           path: hl2sdk-${{ matrix.sdks }}
 
