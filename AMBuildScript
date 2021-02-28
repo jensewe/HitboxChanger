@@ -17,7 +17,9 @@ WinLinux = ['windows', 'linux']
 WinLinuxMac = ['windows', 'linux', 'mac']
 
 PossibleSDKs = {
-  'csgo': SDK('HL2SDKCSGO', '2.csgo', '21', 'CSGO', WinLinuxMac, 'csgo-hitboxchanger'),
+  'csgo': SDK('HL2SDKCSGO', '2.csgo', '21', 'CSGO', WinLinuxMac, 'csgo'),
+  'l4d2': SDK('HL2SDKL4D2', '2.l4d2', '15', 'LEFT4DEAD2', WinLinuxMac, 'l4d2'),
+  #'css':  SDK('HL2SDKCSS', '2.css', '6', 'CSS', WinLinuxMac, 'css'),
 }
 
 def ResolveEnvPath(env, folder):
@@ -73,10 +75,6 @@ class ExtensionConfig(object):
 
     for sdk_name in PossibleSDKs:
       sdk = PossibleSDKs[sdk_name]
-
-      # Hack to make the modified SDK register as the normal CSGO SDK when configuring
-      if sdk.name == "csgo-hitboxchanger":
-        sdk.name = "csgo"
 
       if builder.cxx.target.platform in sdk.platform:
         if builder.options.hl2sdk_root:
