@@ -1,10 +1,6 @@
 #include "extension.h"
 #include "modeltypes.h"
 
-#include <studio.h>
-#include <ivmodelinfo.h>
-#include <datacache/imdlcache.h>
-
 HitboxChanger g_HitboxChanger;
 IVModelInfo   *g_ModelInfo = NULL;
 IMDLCache     *g_ModelCache = NULL;
@@ -28,14 +24,24 @@ StudioHdrReturn GetStudioHdr(studiohdr_t **pStudioHdr, int modelIndex)
             return StudioHdrRet_BadModel;
 	}
 
+#if SOURCE_ENGINE == SE_LEFT4DEAD2 || SOURCE_ENGINE == SE_CSGO
 	if (pModel->type != mod_studio)
 	{
             return StudioHdrRet_BadModelType;
 	}
 
 	*pStudioHdr = g_ModelCache->GetStudioHdr(pModel->studio);
+#else
 
-	if (!pStudioHdr)
+#if DEBUG
+        studiohdr_t *(IVModelInfo::*fp)(const model_t *) = (studiohdr_t *(IVModelInfo::*)(const model_t *))&IVModelInfo::GetStudiomodel;
+        *pStudioHdr = (g_ModelInfo->*fp)(pModel);
+#else
+        *pStudioHdr = g_ModelInfo->GetStudiomodel(pModel);
+#endif
+#endif
+
+	if (!*pStudioHdr)
 	{
             return StudioHdrRet_BadStudioHdr;
 	}
@@ -54,17 +60,17 @@ cell_t HitboxInfo(IPluginContext *pContext, const cell_t *params)
         {
             case StudioHdrRet_BadModel:
             {
-                pContext->ThrowNativeError("[HitboxChanger]: !!!Hitbox Info Failure!!! g_ModelInfo->GetModel() returned null");
+                return pContext->ThrowNativeError("[HitboxChanger]: !!!Hitbox Info Failure!!! IVModelInfo::GetModel() returned null");
                 break;
             }
             case StudioHdrRet_BadModelType:
             {
-                pContext->ThrowNativeError("[HitboxChanger]: !!!Hitbox Info Failure!!! model is not of type studiomodel");
+                return pContext->ThrowNativeError("[HitboxChanger]: !!!Hitbox Info Failure!!! Model is not of type studiomodel");
                 break;
             }
             case StudioHdrRet_BadStudioHdr:
             {
-                pContext->ThrowNativeError("[HitboxChanger]: !!!Find Valid Bones Failure!!! Bad StudioHDR");
+                return pContext->ThrowNativeError("[HitboxChanger]: !!!Hitbox Info Failure!!! Bad StudioHDR");
                 break;
             }
         }

@@ -1,13 +1,13 @@
 #include <model_types.h>
 #include <studio.h>
+#include <ivmodelinfo.h>
+#include <datacache/imdlcache.h>
 
 #define MAX_OSPATH 260
 
 typedef void *FileNameHandle_t;
 
-typedef void *brushdata_t;
-typedef void *spritedata_t;
-
+#if SOURCE_ENGINE == SE_LEFT4DEAD2 || SOURCE_ENGINE == SE_CSGO
 struct model_t
 {
 	FileNameHandle_t		fnHandle;
@@ -33,6 +33,7 @@ struct model_t
 	};
 
 };
+#endif
 
 struct proxy_mstudiobbox_t
 {
