@@ -1,14 +1,14 @@
 #ifndef _INCLUDE_SOURCEMOD_EXTENSION_CONFIG_H_
 #define _INCLUDE_SOURCEMOD_EXTENSION_CONFIG_H_
 
-#define SMEXT_CONF_NAME			"Hitbox Changer"
-#define SMEXT_CONF_DESCRIPTION	"Interface to modify player hitboxes"
-#define SMEXT_CONF_VERSION		"0.1.0.45"
-#define SMEXT_CONF_AUTHOR		"PikaJew"
-#define SMEXT_CONF_URL			"http://cascadeservers.net/"
-#define SMEXT_CONF_LOGTAG		"HBCHANGE"
-#define SMEXT_CONF_LICENSE		"GPL"
-#define SMEXT_CONF_DATESTRING	__DATE__
+#define SMEXT_CONF_NAME                 "Hitbox Changer"
+#define SMEXT_CONF_DESCRIPTION	        "Interface to modify player hitboxes"
+#define SMEXT_CONF_VERSION              "0.1.1.0"
+#define SMEXT_CONF_AUTHOR               "PikaJew and Zynda"
+#define SMEXT_CONF_URL                  "pending_change_me"
+#define SMEXT_CONF_LOGTAG               "HBCHANGER"
+#define SMEXT_CONF_LICENSE              "GPL"
+#define SMEXT_CONF_DATESTRING           __DATE__
 
 #define SMEXT_LINK(name) SDKExtension *g_pExtensionIface = name;
 
