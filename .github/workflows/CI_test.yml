@@ -19,7 +19,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt update
-          sudo apt install -yq --no-install-recommends g++-multilib lib32z1-dev
+          sudo apt install -yq --no-install-recommends g++-multilib
       - name: Set up Python
         uses: actions/setup-python@v2
 
