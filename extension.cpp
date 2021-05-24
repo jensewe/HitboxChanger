@@ -15,7 +15,7 @@ enum StudioHdrReturn
     StudioHdrRet_BadStudioHdr,
 };
 
-StudioHdrReturn GetStudioHdr(studiohdr_t **pStudioHdr, int modelIndex)
+StudioHdrReturn GetStudioHdr(studiohdr_t *&pStudioHdr, int modelIndex)
 {
 	const model_t* pModel = g_ModelInfo->GetModel(modelIndex);
 
@@ -24,24 +24,26 @@ StudioHdrReturn GetStudioHdr(studiohdr_t **pStudioHdr, int modelIndex)
             return StudioHdrRet_BadModel;
 	}
 
+        // This will be a hack until IVModelInfo is updated in their respective SDK
 #if SOURCE_ENGINE == SE_LEFT4DEAD2 || SOURCE_ENGINE == SE_CSGO
 	if (pModel->type != mod_studio)
 	{
             return StudioHdrRet_BadModelType;
 	}
 
-	*pStudioHdr = g_ModelCache->GetStudioHdr(pModel->studio);
+	pStudioHdr = g_ModelCache->GetStudioHdr(pModel->studio);
 #else
 
 #if DEBUG
+        // Pointer to easily check the vtable offset with an debugger
         studiohdr_t *(IVModelInfo::*fp)(const model_t *) = (studiohdr_t *(IVModelInfo::*)(const model_t *))&IVModelInfo::GetStudiomodel;
-        *pStudioHdr = (g_ModelInfo->*fp)(pModel);
+        pStudioHdr = (g_ModelInfo->*fp)(pModel);
 #else
-        *pStudioHdr = g_ModelInfo->GetStudiomodel(pModel);
+        pStudioHdr = g_ModelInfo->GetStudiomodel(pModel);
 #endif
 #endif
 
-	if (!*pStudioHdr)
+	if (!pStudioHdr)
 	{
             return StudioHdrRet_BadStudioHdr;
 	}
@@ -54,7 +56,8 @@ cell_t HitboxInfo(IPluginContext *pContext, const cell_t *params)
         cell_t modelIndex = params[1];
 
         studiohdr_t *pStudioHdr = nullptr;
-        StudioHdrReturn ret = GetStudioHdr(&pStudioHdr, modelIndex);
+
+        StudioHdrReturn ret = GetStudioHdr(pStudioHdr, modelIndex);
 
         switch (ret)
         {
@@ -112,7 +115,7 @@ cell_t BoneInfo(IPluginContext *pContext, const cell_t *params)
         cell_t modelIndex = params[1];
         
         studiohdr_t *pStudioHdr = nullptr;
-        StudioHdrReturn ret = GetStudioHdr(&pStudioHdr, modelIndex);
+        StudioHdrReturn ret = GetStudioHdr(pStudioHdr, modelIndex);
 
         switch (ret)
         {
@@ -157,7 +160,7 @@ cell_t SetHitbox(IPluginContext *pContext, const cell_t *params)
 	cell_t hitboxIndex = params[2];
 
         studiohdr_t *pStudioHdr = nullptr;
-        StudioHdrReturn ret = GetStudioHdr(&pStudioHdr, modelIndex);
+        StudioHdrReturn ret = GetStudioHdr(pStudioHdr, modelIndex);
 
         switch (ret)
         {
@@ -249,7 +252,7 @@ cell_t GetHitbox(IPluginContext *pContext, const cell_t *params)
 	cell_t hitboxIndex = params[2];
 
         studiohdr_t *pStudioHdr = nullptr;
-        StudioHdrReturn ret = GetStudioHdr(&pStudioHdr, modelIndex);
+        StudioHdrReturn ret = GetStudioHdr(pStudioHdr, modelIndex);
 
         switch (ret)
         {
@@ -332,7 +335,7 @@ cell_t SetNumHitboxes(IPluginContext *pContext, const cell_t *params)
         cell_t modelIndex = params[1];
 
         studiohdr_t *pStudioHdr = nullptr;
-        StudioHdrReturn ret = GetStudioHdr(&pStudioHdr, modelIndex);
+        StudioHdrReturn ret = GetStudioHdr(pStudioHdr, modelIndex);
 
         switch (ret)
         {
@@ -371,7 +374,7 @@ cell_t GetNumHitboxes(IPluginContext *pContext, const cell_t *params)
         cell_t modelIndex = params[1];
 
         studiohdr_t *pStudioHdr = nullptr;
-        StudioHdrReturn ret = GetStudioHdr(&pStudioHdr, modelIndex);
+        StudioHdrReturn ret = GetStudioHdr(pStudioHdr, modelIndex);
 
         switch (ret)
         {
@@ -411,7 +414,7 @@ cell_t FindBone(IPluginContext *pContext, const cell_t *params)
 	cell_t modelIndex = params[2];
 	
         studiohdr_t *pStudioHdr = nullptr;
-        StudioHdrReturn ret = GetStudioHdr(&pStudioHdr, modelIndex);
+        StudioHdrReturn ret = GetStudioHdr(pStudioHdr, modelIndex);
 
         switch (ret)
         {
@@ -464,7 +467,7 @@ cell_t FindValidBones(IPluginContext *pContext, const cell_t *params)
         cell_t modelIndex = params[1];
 
         studiohdr_t *pStudioHdr = nullptr;
-        StudioHdrReturn ret = GetStudioHdr(&pStudioHdr, modelIndex);
+        StudioHdrReturn ret = GetStudioHdr(pStudioHdr, modelIndex);
 
         switch (ret)
         {
@@ -506,7 +509,7 @@ const sp_nativeinfo_t MyNatives[] =
 	{"GetNumHitboxes",	GetNumHitboxes},
 	{"FindBone",		FindBone},
 	{"FindValidBones",	FindValidBones},
-	{NULL,				NULL},
+	{NULL,			NULL},
 };
 
 bool HitboxChanger::SDK_OnLoad(char *error, size_t maxlen, bool late)
