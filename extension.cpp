@@ -149,7 +149,13 @@ cell_t BoneInfo(IPluginContext *pContext, const cell_t *params)
                 const mstudiobone_t *bone = pStudioHdr->pBone(i);
                 if (!bone)
                         continue;
-                rootconsole->ConsolePrint("Bone: %d, Name: %s, Flags: %d", i, bone->pszName(),bone->flags);
+                rootconsole->ConsolePrint("Bone: %d, Name: %s, Flags: %d, pos: [ %.2f, %.2f, %.2f ], quat: [ %.2f, %.2f, %.2f, %.2f ] rot: [ %.2f, %.2f, %.2f ]",
+					  i,
+					  bone->pszName(),
+					  bone->flags,
+					  bone->pos.x, bone->pos.y, bone->pos.z,
+					  bone->quat.x, bone->quat.y, bone->quat.z, bone->quat.w,
+					  bone->rot.x, bone->rot.y, bone->rot.z);
         }
 	return 1;
 }
